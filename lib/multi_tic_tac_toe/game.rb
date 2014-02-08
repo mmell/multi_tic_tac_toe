@@ -7,7 +7,8 @@ module MultiTicTacToe
       @dimensions, @player_ct, @grid_size = dimensions, player_ct, grid_size
       @players, @current_player = Player.create_players(player_ct), 0
       @plays, @points, @lines = [], {}, {}
-      generate_dimension_points(0, (0...@grid_size).map { |e| [e] } ).each { |e|
+      dimensions = (0...@grid_size).map { |e| [e] }
+      generate_dimension_points(0, dimensions ).each { |e|
         @points[e] = nil
       }
       generate_lines
@@ -89,7 +90,7 @@ module MultiTicTacToe
         puts @game_over
         return
       end
-      puts "\nPlayer #{get_player} claims position #{point} in move ##{@plays.size}."
+      puts "\n#{get_player} claims position #{point} in move ##{@plays.size}."
       @points[point] = get_player
       game_board_display
       check_winner(point)
@@ -100,7 +101,7 @@ module MultiTicTacToe
       player_line = Array.new(@grid_size, get_player)
       @lines[point].each { |line|
         if line.map { |point| @points[point] } == player_line
-          set_game_over("\n *** Player #{get_player} won on line: #{line.inspect}.")
+          set_game_over("\n *** #{get_player} wins on line: #{line.inspect}.")
           return
         end
       }

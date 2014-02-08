@@ -6,7 +6,7 @@ module MultiTicTacToe
     end
 
     def to_s
-      "P#{@ix}"
+      "Player#{@ix}"
     end
 
     def inspect # need this for game_board_display()
