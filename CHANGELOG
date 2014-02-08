@@ -1,0 +1,9 @@
+2014-02-14 Michael Mell
+  * Version 2.0.0
+  * move code to conventional layout suitable for a gem
+  * add Position class and specs
+  * massive performance improvement gained by calculating a Position's lines only when it is added (a player move)
+  * now the 10 dimensional sample game can complete in seconds (was greater than 15 hours in Version 1)
+
+Feb 2010
+  * Version 1. Not released until 2014.

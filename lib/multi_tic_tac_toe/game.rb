@@ -1,70 +1,12 @@
 module MultiTicTacToe
 
   class Game
-    def initialize( dimensions = 2, player_ct = 2, grid_size = 3)
-      puts "\n\n=============================================
+    def initialize( dimensions = 2, grid_size = 3, player_ct = 2)
+      message "\n\n=============================================
   Starting game with #{dimensions} dimensions and #{player_ct} players on a board grid with #{grid_size} positions per dimension."
       @dimensions, @player_ct, @grid_size = dimensions, player_ct, grid_size
       @players, @current_player = Player.create_players(player_ct), 0
-      @plays, @points, @lines = [], {}, {}
-      dimensions = (0...@grid_size).map { |e| [e] }
-      generate_dimension_points(0, dimensions ).each { |e|
-        @points[e] = nil
-      }
-      generate_lines
-      game_board_display
-    end
-
-    # recursively generate all the points in a dimension
-    def generate_dimension_points( dimension, points )
-      return points if dimension +1 == @dimensions
-      new_points = []
-      (0...@grid_size).each { |grid|
-        points.each { |p|
-          pp = p.dup
-          pp << grid
-          new_points << pp
-        }
-      }
-      generate_dimension_points( dimension +1, new_points)
-    end
-
-    # map points on a line to the line
-    def map_line_to_points(line)
-      line.each { |point|
-        @lines[point] ||= []
-        @lines[point] << line unless @lines[point].include?(line) or @lines[point].include?(line.reverse)
-      }
-    end
-
-    # map each point to all the lines on which it is found
-    def generate_lines
-      @points.keys.each { |point|
-        next unless ( point.include?(0) or point.include?(@grid_size - 1) ) # only process edges
-        increments = (0...point.size).map { |ix|
-          case point[ix]
-          when 0
-            line_point, line = point.dup, [point.dup]
-            (1...@grid_size).each { |grid|
-              line_point[ix] += 1 # this line will increment only on the ix dimension
-              line << line_point.dup
-            }
-            map_line_to_points(line)
-            1
-          when @grid_size - 1
-            -1
-          else
-            0
-          end
-        }
-        # do the diagonal
-        line_point, line = point.dup, [point.dup]
-        (1...@grid_size).each { |grid|
-          (0...@dimensions).each { |ix| line_point[ix] += increments[ix] }
-          line << line_point.dup
-        }
-        map_line_to_points(line)
-      }
+      @num_positions, @moves = (grid_size ** dimensions), {}
     end
 
     def next_player
@@ -75,45 +17,55 @@ module MultiTicTacToe
       @players[@current_player]
     end
 
-    def check_move(point)
-      raise RuntimeError, "missing point" unless point.size == @dimensions
-      raise RuntimeError, "position taken" if @plays.include?(point)
-      raise RuntimeError, "position off grid" if point.max >= @grid_size
-
-      @plays << point
+    def valid_move?(position)
+      # FIXME handle invalid moves with grace
+      raise RuntimeError, "invalid position" unless position.size == @dimensions # Position class fills missing dimensions
+      raise RuntimeError, "position taken" if @moves.keys.include?(position)
+      raise RuntimeError, "position off grid" if position.max >= @grid_size
     end
 
-    # current player claims a point
-    def move(point)
-      check_move(point)
-      if @game_over
-        puts @game_over
-        return
-      end
-      puts "\n#{get_player} claims position #{point} in move ##{@plays.size}."
-      @points[point] = get_player
+    # current player claims a position
+    def move(*dimension_positions)
+      message "The game is over." and return if game_over?
+      position = Position.new(@dimensions, @grid_size, *dimension_positions)
+      valid_move?(position)
+      message "\n#{get_player} claims position #{position} in move ##{@moves.size}."
+      @moves[position] = get_player
       game_board_display
-      check_winner(point)
+      return if check_winner(position)
       next_player
     end
 
-    def check_winner(point)
-      player_line = Array.new(@grid_size, get_player)
-      @lines[point].each { |line|
-        if line.map { |point| @points[point] } == player_line
-          set_game_over("\n *** #{get_player} wins on line: #{line.inspect}.")
-          return
+    def check_winner(position)
+      game_over("Game ends in a Draw.") if board_full?
+      position.lines.each { |line|
+        if (line.select { |line_pos| @moves[line_pos] != get_player }.empty?)
+          game_over("#{get_player} wins on line: #{line.inspect}.")
+          return true
         end
       }
-      set_game_over("\n *** Game ended in a Draw.") if @plays.size == @points.size
+      false
     end
 
-    def set_game_over(s)
-      puts @game_over ||= s
+    def board_full?
+      @num_positions == @moves.size
+    end
+
+    def game_over?
+      @game_over
+    end
+
+    def game_over(s)
+      @game_over = true
+      message "\n *** #{s}"
+    end
+
+    def message(s)
+      puts s
     end
 
     def game_board_display
-      puts @points.inspect # this is interesting but messy on big boards
+      message @moves.inspect # this is too messy for big games
     end
 
   end

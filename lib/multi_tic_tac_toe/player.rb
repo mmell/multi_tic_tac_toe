@@ -14,7 +14,7 @@ module MultiTicTacToe
     end
 
     def self.create_players(players_ct)
-      (0...players_ct).map { |e| new(e) }
+      (0...players_ct).map { |e| new(e +1) }
     end
 
   end
