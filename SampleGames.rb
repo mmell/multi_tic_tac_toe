@@ -1,7 +1,7 @@
 # > ruby ./SampleGames.rb
 #
 
-require_relative 'multi_tic_tac_toe'
+require_relative 'lib/multi_tic_tac_toe'
 
 # Each move sets a position on each dimension to define a claimed position.
 
