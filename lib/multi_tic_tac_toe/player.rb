@@ -5,13 +5,12 @@ module MultiTicTacToe
       @ix = ix
     end
 
-    def to_s
+    # a readable name for display
+    def name
       "Player#{@ix}"
     end
-
-    def inspect # need this for game_board_display()
-      to_s
-    end
+    alias_method :to_s, :name
+    alias_method :inspect, :name # used in line.inspect
 
     def self.create_players(players_ct)
       (0...players_ct).map { |e| new(e +1) }

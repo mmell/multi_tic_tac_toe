@@ -15,7 +15,7 @@ module MultiTicTacToe
       @current_player = @current_player >= (@player_ct - 1) ? 0 : @current_player + 1
     end
 
-    def get_player
+    def current_player
       @players[@current_player]
     end
 
@@ -31,8 +31,8 @@ module MultiTicTacToe
       message "The game is over." and return if game_over?
       position = Position.new(@dimensions, @grid_size, *dimension_positions)
       valid_move?(position)
-      message "\n#{get_player} claims position #{position} in move ##{@moves.size}."
-      @moves[position] = get_player
+      message "\n#{current_player} claims position #{position} in move ##{@moves.size}."
+      @moves[position] = current_player
       game_board_display
       return if check_winner(position)
       next_player
@@ -41,8 +41,8 @@ module MultiTicTacToe
     def check_winner(position)
       game_over("Game ends in a Draw.") if board_full?
       position.lines.each { |line|
-        if (line.select { |line_pos| @moves[line_pos] != get_player }.empty?)
-          game_over("#{get_player} wins on line: #{line.inspect}.")
+        if (line.select { |line_pos| @moves[line_pos] != current_player }.empty?)
+          game_over("#{current_player} wins on line: #{line.inspect}.")
           return true
         end
       }

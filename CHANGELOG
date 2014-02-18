@@ -1,8 +1,8 @@
 2014-02-14 Michael Mell
   * Version 2.0.1
-  * add game_spec and test for known bug
+  * fix Position#line_in
+  * add game_spec and test for winning move is not on an edge
   * use keyword args in Game initializer
-  * fix bug when winning move is not on an edge
 
 2014-02-14 Michael Mell
   * Version 2.0.0

@@ -3,7 +3,13 @@ require_relative '../lib/multi_tic_tac_toe/position'
 
 shared_context "lines_through" do
   it "has the expected set" do
-    expect(subject.lines.sort).to eq expected.sort
+    expected.each { |line|
+      expect(subject.lines).to include(line)
+    }
+  end
+
+  it "has no duplicates" do
+# FIXME    expect(subject.lines.uniq!).to be_nil
   end
 end
 
@@ -70,7 +76,7 @@ describe MultiTicTacToe::Position do
 
     describe "2 dimensions" do
       describe "3 grid" do
-        describe "0, 0" do
+        describe "[0, 0]" do
           let(:expected) {
             [
               [position, [1, 0], [2, 0]],
@@ -82,7 +88,7 @@ describe MultiTicTacToe::Position do
           include_context "lines_through"
         end
 
-        describe "1, 0" do
+        describe "[1, 0]" do
           let(:expected) {
             [
               [position, [1, 1], [1, 2]],
@@ -92,12 +98,24 @@ describe MultiTicTacToe::Position do
           include_context "lines_through"
         end
 
-        describe "0, 2" do
+        describe "[1, 1]" do
           let(:expected) {
             [
-              [[0, 2], [0, 1], [0, 0]],
-              [[0, 2], [1, 2], [2, 2]],
-              [[0, 2], [1, 1], [2, 0]],
+              [[0, 1], position, [2, 1]],
+              [[1, 0], position, [1, 2]],
+              [[0, 0], position, [2, 2]],
+            ]
+          }
+          let(:position) { [1, 1] }
+          include_context "lines_through"
+        end
+
+        describe "[0, 2]" do
+          let(:expected) {
+            [
+              [[0, 0], [0, 1], position],
+              [position, [1, 2], [2, 2]],
+              [position, [1, 2], [2, 2]],
             ]
           }
           let(:position) { [0, 2] }
@@ -108,7 +126,7 @@ describe MultiTicTacToe::Position do
 
     describe "3 dimensions" do
       describe "3 grid" do
-        describe "0, 0, 0" do
+        describe "[0, 0, 0]" do
           let(:expected) {
             [
               [position, [1, 0, 0], [2, 0, 0]],
@@ -126,7 +144,7 @@ describe MultiTicTacToe::Position do
           include_context "lines_through"
         end
 
-        describe "1, 0, 0" do
+        describe "[1, 0, 0]" do
           let(:expected) {
             [
               [position, [1, 1, 0], [1, 2, 0]],
@@ -139,15 +157,12 @@ describe MultiTicTacToe::Position do
           include_context "lines_through"
         end
 
-        describe "0, 2, 0" do
+        describe "[0, 2, 0]" do
           let(:expected) {
             [
-              [[0, 2, 0], [0, 1, 0], [0, 0, 0]],
-              [[0, 2, 0], [0, 1, 1], [0, 0, 2]],
-              [[0, 2, 0], [0, 2, 1], [0, 2, 2]],
-              [[0, 2, 0], [1, 1, 0], [2, 0, 0]],
-              [[0, 2, 0], [1, 1, 1], [2, 0, 2]],
               [[0, 2, 0], [1, 2, 0], [2, 2, 0]],
+              [[0, 0, 0], [0, 1, 0], [0, 2, 0]],
+              [[0, 2, 0], [0, 2, 1], [0, 2, 2]],
               [[0, 2, 0], [1, 2, 1], [2, 2, 2]]
             ]
           }
@@ -161,7 +176,7 @@ describe MultiTicTacToe::Position do
     describe "4 dimensions" do
       describe "3 grid" do
 
-        describe "0, 0, 0, 0" do
+        describe "[0, 0, 0, 0]" do
           let(:expected) {
             [
               [[0, 0, 0, 0], [0, 0, 0, 1], [0, 0, 0, 2]],
@@ -185,7 +200,7 @@ describe MultiTicTacToe::Position do
           include_context "lines_through"
         end
 
-        describe "0, 1, 0, 0" do
+        describe "[0, 1, 0, 0]" do
           let(:expected) {
             [
               [[0, 1, 0, 0], [0, 1, 0, 1], [0, 1, 0, 2]],
@@ -201,23 +216,17 @@ describe MultiTicTacToe::Position do
           include_context "lines_through"
         end
 
-        describe "0, 0, 2, 0" do
+        describe "[0, 0, 2, 0]" do
           let(:expected) {
             [
-              [[0, 0, 2, 0], [0, 0, 1, 0], [0, 0, 0, 0]],
-              [[0, 0, 2, 0], [0, 0, 1, 1], [0, 0, 0, 2]],
-              [[0, 0, 2, 0], [0, 0, 2, 1], [0, 0, 2, 2]],
-              [[0, 0, 2, 0], [0, 1, 1, 0], [0, 2, 0, 0]],
-              [[0, 0, 2, 0], [0, 1, 1, 1], [0, 2, 0, 2]],
-              [[0, 0, 2, 0], [0, 1, 2, 0], [0, 2, 2, 0]],
-              [[0, 0, 2, 0], [0, 1, 2, 1], [0, 2, 2, 2]],
-              [[0, 0, 2, 0], [1, 0, 1, 0], [2, 0, 0, 0]],
-              [[0, 0, 2, 0], [1, 0, 1, 1], [2, 0, 0, 2]],
               [[0, 0, 2, 0], [1, 0, 2, 0], [2, 0, 2, 0]],
-              [[0, 0, 2, 0], [1, 0, 2, 1], [2, 0, 2, 2]],
-              [[0, 0, 2, 0], [1, 1, 1, 0], [2, 2, 0, 0]],
-              [[0, 0, 2, 0], [1, 1, 1, 1], [2, 2, 0, 2]],
+              [[0, 0, 2, 0], [0, 1, 2, 0], [0, 2, 2, 0]],
+              [[0, 0, 0, 0], [0, 0, 1, 0], [0, 0, 2, 0]],
+              [[0, 0, 2, 0], [0, 0, 2, 1], [0, 0, 2, 2]],
               [[0, 0, 2, 0], [1, 1, 2, 0], [2, 2, 2, 0]],
+              [[0, 0, 2, 0], [0, 1, 2, 1], [0, 2, 2, 2]],
+              [[0, 0, 2, 0], [1, 0, 2, 1], [2, 0, 2, 2]],
+              [[0, 0, 2, 0], [0, 1, 2, 1], [0, 2, 2, 2]],
               [[0, 0, 2, 0], [1, 1, 2, 1], [2, 2, 2, 2]]
             ]
           }
@@ -231,7 +240,7 @@ describe MultiTicTacToe::Position do
       describe "4 grid" do
         let(:grid) {4}
 
-        describe "0, 0, 0, 0" do
+        describe "[0, 0, 0, 0]" do
           let(:expected) {
             [
               [[0, 0, 0, 0], [0, 0, 0, 1], [0, 0, 0, 2], [0, 0, 0, 3]],
@@ -255,7 +264,7 @@ describe MultiTicTacToe::Position do
           include_context "lines_through"
         end
 
-        describe "0, 1, 0, 0" do
+        describe "[0, 1, 0, 0]" do
           let(:expected) {
             [
               [[0, 1, 0, 0], [0, 1, 0, 1], [0, 1, 0, 2], [0, 1, 0, 3]],
@@ -271,7 +280,7 @@ describe MultiTicTacToe::Position do
           include_context "lines_through"
         end
 
-        describe "0, 0, 2, 0" do
+        describe "[0, 0, 2, 0]" do
           let(:expected) {
             [
               [[0, 0, 2, 0], [0, 0, 2, 1], [0, 0, 2, 2], [0, 0, 2, 3]],

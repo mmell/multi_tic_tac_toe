@@ -1,7 +1,6 @@
 module MultiTicTacToe
 
   class Position < Array
-    attr_reader :grid_size
 
     def initialize(dimension_size, grid_size, *dimension_positions)
       super dimension_positions.fill(dimension_positions.size...dimension_size) { |e| 0 }
@@ -10,43 +9,36 @@ module MultiTicTacToe
 
     alias_method :dimensions, :size # number of dimensions
 
+    # all of the lines through this Position
     def lines
-      lines = dimension_matrix.map { |e| line_in(e) }.delete_if { |e| e.nil? }
-      lines.uniq! # FIXME! why is this needed?
-      lines
+      dimension_matrix.map { |e| line_in(e) }.delete_if { |e| e.nil? }
     end
 
+    # get the line that changes in `matrix_elements` dimensions
     def line_in(matrix_elements = [0])
-      return nil unless motion_in_these_dimensions?(matrix_elements)
-      line = [self]
-      (1...grid_size).each { |step|
+      matrix_elements.each { |dimension|
+        return nil unless self[dimension] == self[matrix_elements[0]] # no line in these dimensions
+      }
+      line = [line_start(matrix_elements)]
+      (1...@grid_size).each { |step|
         new_position = line[-1].dup
         matrix_elements.each { |dimension|
-          new_position[dimension] += step_increments[dimension]
+          new_position[dimension] += 1
         }
         line << new_position
       }
       line
     end
 
-    def step_increments
-      @increments ||= self.map { |e|
-        case e
-        when 0
-          1 # lines move in positive direction in this dimension
-        when (grid_size - 1)
-          -1 # lines move in negative direction in this dimension
-        else
-          0 # no line originates in this dimension
-        end
-      }
+    # get the beginning endpoint for #line_in(matrix_elements)
+    def line_start(matrix_elements = [0])
+      return self if self[matrix_elements[0]] == 0
+      beginning = self.dup
+      matrix_elements.each { |dimension| beginning[dimension] = 0 }
+      beginning
     end
 
-    def motion_in_these_dimensions?(matrix_elements)
-      matrix_elements.each { |e| return true if step_increments[e] != 0 }
-      false
-    end
-
+    # return every combination of dimensions. e.g. [[0], [1], [0, 1]]
     def dimension_matrix(start = 0, matrix = []) # recurses
       return matrix if start >= dimensions
       new_matrix = []
