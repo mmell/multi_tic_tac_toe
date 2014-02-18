@@ -1,6 +1,12 @@
 2014-02-14 Michael Mell
+  * Version 2.0.1
+  * add game_spec and test for known bug
+  * use keyword args in Game initializer
+  * fix bug when winning move is not on an edge
+
+2014-02-14 Michael Mell
   * Version 2.0.0
-  * move code to conventional layout suitable for a gem
+  * move code to conventional namespaced layout
   * add Position class and specs
   * massive performance improvement gained by calculating a Position's lines only when it is added (a player move)
   * now the 10 dimensional sample game can complete in seconds (was greater than 15 hours in Version 1)

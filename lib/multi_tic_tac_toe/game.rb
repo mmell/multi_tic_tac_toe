@@ -1,10 +1,12 @@
 module MultiTicTacToe
 
   class Game
-    def initialize( dimensions = 2, grid_size = 3, player_ct = 2)
+    attr_reader :players
+
+    def initialize( dimensions = 2, grid_size = 3, player_ct: 2, message: true)
       message "\n\n=============================================
   Starting game with #{dimensions} dimensions and #{player_ct} players on a board grid with #{grid_size} positions per dimension."
-      @dimensions, @player_ct, @grid_size = dimensions, player_ct, grid_size
+      @dimensions, @player_ct, @grid_size, @message = dimensions, player_ct, grid_size, message
       @players, @current_player = Player.create_players(player_ct), 0
       @num_positions, @moves = (grid_size ** dimensions), {}
     end
@@ -52,7 +54,11 @@ module MultiTicTacToe
     end
 
     def game_over?
-      @game_over
+      !!@game_over
+    end
+
+    def winner
+      @game_over and @moves.values.last
     end
 
     def game_over(s)
@@ -61,7 +67,7 @@ module MultiTicTacToe
     end
 
     def message(s)
-      puts s
+      puts s if @message
     end
 
     def game_board_display
