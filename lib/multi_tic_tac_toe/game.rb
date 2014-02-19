@@ -11,10 +11,6 @@ module MultiTicTacToe
       @num_positions, @moves = (grid_size ** dimensions), {}
     end
 
-    def next_player
-      @current_player = @current_player >= (@player_ct - 1) ? 0 : @current_player + 1
-    end
-
     def current_player
       @players[@current_player]
     end
@@ -61,6 +57,16 @@ module MultiTicTacToe
       @game_over and @moves.values.last
     end
 
+    def game_board_display
+      message @moves.inspect # this is too messy for big games
+    end
+
+    protected
+
+    def next_player
+      @current_player = @current_player >= (@player_ct - 1) ? 0 : @current_player + 1
+    end
+
     def game_over(s)
       @game_over = true
       message "\n *** #{s}"
@@ -68,10 +74,6 @@ module MultiTicTacToe
 
     def message(s)
       puts s if @message
-    end
-
-    def game_board_display
-      message @moves.inspect # this is too messy for big games
     end
 
   end
